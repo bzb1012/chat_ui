@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+<body>
+<div class="new-msg-list-div" id="new-msg-list-div">
+  <div class="content-div">
+    <div class="title" id="title">新消息</div>
+    <div class="list-div" id="list-div"></div>
+  </div>
+  <div class="footer" onclick="onIgnoreAll()">忽略全部</div>
+</div>
+
+</body>
+</html>
+<script type="text/javascript">
+
+  //获取标题dom
+  const title = document.getElementById('title');
+  //更新标题中的新消息总数量
+  function updateTitleNumber(totalNumber) {
+    title.innerHTML = '新消息（'+totalNumber+'）';
+  }
+  //获取存放列表的div
+  const listDiv = document.getElementById('list-div')
+  //清空列表dom
+  function clearListDivDom(){
+    while(listDiv.hasChildNodes()){
+      listDiv.removeChild(listDiv.firstChild);
+    }
+  }
+  //创建列表dom
+  function createListDom (listData){
+    clearListDivDom()//清空列表Dom
+    let totalNumber = 0;//消息总数
+    listData.forEach(item => {//遍历列表数据创建dom节点
+      const listItem = document.createElement('div');
+      listItem.className = "list-item"
+      listItem.onclick = () => this.onRead(item)
+      const content = document.createElement('div');
+      content.className = "content"
+      const avatorDiv = document.createElement('div');
+      avatorDiv.className = "avator-div"
+      if(item.chatType === 0){
+        const avator = document.createElement('img');
+        avator.src = item.avator
+        avator.className = "avator-1"
+        avatorDiv.append(avator)
+      }else if(item.chatType === 2){
+        itemAvator = JSON.parse(item.avator);
+        if(itemAvator.length > 9){
+          itemAvator = itemAvator.slice(0,9);
+        }
+        itemAvator.forEach(memberInfo => {
+          const avator = document.createElement('img');
+          avator.src = memberInfo.avator;
+          avator.className = `avator-${itemAvator.length===1?1:itemAvator.length<5?2:3}`;
+          avatorDiv.append(avator)
+        })
+      }
+      const nameDiv = document.createElement('div');
+      nameDiv.className = "name-div"
+      const name = document.createElement('span');
+      name.className = "name"
+      name.innerHTML = item.name
+      content.append(avatorDiv)
+      nameDiv.append(name)
+      content.append(nameDiv)
+      const msgNum = document.createElement('div');
+      msgNum.className = "msg-num";
+      msgNum.innerHTML = item.number
+      listItem.append(content)
+      listItem.append(msgNum)
+      listDiv.append(listItem)
+      totalNumber += item.number;//计算消息总数量
+    });
+    updateTitleNumber(totalNumber);//更新标题中的新消息总数量
+  }
+  // 测试数据
+  createListDom([
+    {
+      chatType: 0,
+      name:"小红",
+      avator:"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw%2F1e8de07f-2c9e-4ecb-8893-5a8194a09d8f%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1691724076&t=94e27960b3d78a23e2ce2b928c71f137",
+      number:1,
+    },
+    {
+      chatType: 2,
+      name:"开发小组群",
+      avator:JSON.stringify([{
+        avator:"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2Fb4a87154-18b6-4163-ac80-f4dc4bf58d09%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1691724183&t=0527914495bf1d2c835608ab2434d9ee",
+        name:"小明",
+        user_uid:"185e0a6f09354b198ecefcd2fe951e7a",
+      },{
+        avator:"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2F8075fa62-cf88-420a-88f7-9a4a4d714bb0%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1691724168&t=cb552345dca3226fc176f19936a1d901",
+        name:"小张",
+        user_uid:"3b794365c946443fb3ec1c2ee13d2984",
+      },{
+        avator:"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2F9e18d14b-8a44-41b0-97d9-6aed05b70e7f%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1691724139&t=832f8c9b8de23e731497e4d001c3dc87",
+        name:"小美",
+        user_uid:"185e0a6f09354b198ecefcd2fe951e7a",
+      },{
+        avator:"https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fsafe-img.xhscdn.com%2Fbw1%2F5ea36c18-f346-4f99-a4e0-3017a434f1aa%3FimageView2%2F2%2Fw%2F1080%2Fformat%2Fjpg&refer=http%3A%2F%2Fsafe-img.xhscdn.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=auto?sec=1691724120&t=8d5c76cd0185cfccecb6e013f11b5013",
+        name:"小包",
+        user_uid:"185e0a6f09354b198ecefcd2fe951e7a",
+      },
+      ]),
+      number:5,
+    },
+
+  ])
+
+  //读取了某个聊天对象的消息
+  function onRead(msg){
+  }
+
+
+  //点击 忽略全部 时触发
+  function onIgnoreAll(){
+  }
+
+</script>
+<style>
+  body{
+    margin: 0;
+    padding: 0;
+  }
+
+  .new-msg-list-div{
+    font-size: 12px;
+    cursor: context-menu;
+  }
+
+  .new-msg-list-div .content-div{
+    border-bottom: solid 1px #dedede;
+  }
+  .new-msg-list-div .content-div .title{
+    line-height: 34px;
+    font-weight: bold;
+    padding: 0 20px;
+  }
+  .new-msg-list-div .content-div .list-div{
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width:none;/*设置火狐浏览器不显示滚动条*/
+
+  }
+
+  .new-msg-list-div .content-div .list-div::-webkit-scrollbar{/*设置谷歌浏览器不显示滚动条*/
+    width: 0;
+    height: 0;
+    background-color: transparent;
+  }
+  .new-msg-list-div .content-div .list-div .list-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 20px;
+    border-bottom: solid 1px #eee;
+
+  }
+  .new-msg-list-div .content-div .list-div .list-item:hover{
+    background-color: #e8e8e8;
+
+  }
+  .new-msg-list-div .content-div .list-div .list-item .content{
+    display: flex;
+    align-items: center;
+  }
+  .new-msg-list-div .content-div .list-div .list-item .content .avator-div{
+    width: 34px;
+    height: 34px;
+    background-color: #eee;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap-reverse;
+    justify-content: center;
+    overflow: hidden;
+    align-content: center;
+    border-radius: 0px;
+    flex-shrink: 0;
+
+  }
+  .new-msg-list-div .content-div .list-div .list-item .content .avator-div .avator-1{
+    width: 100%;
+    height: 100%;
+    border-radius: 2px;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+
+  }
+  .new-msg-list-div .content-div .list-div .list-item .content .avator-div .avator-2{
+    width: 46%;
+    height: 46%;
+    margin: 2%;
+    font-size: 8px;
+    line-height: 46%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+  }
+  .new-msg-list-div .content-div .list-div .list-item .content .avator-div .avator-2 span{
+    transform: scale(0.75);
+    display: inline-block;
+  }
+  .new-msg-list-div .content-div .list-div .list-item .content .avator-div .avator-3{
+    width: 30%;
+    height: 30%;
+    margin: 1%;
+    font-size: 7px;
+    line-height: 30%;
+    zoom: 0.7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+  }
+  .new-msg-list-div .content-div .list-div .list-item .content .avator-div .avator-3 span{
+    transform: scale(0.75);
+    display: inline-block;
+  }
+
+  .new-msg-list-div .content-div .list-div .list-item .content .name-div{
+    display: flex;
+    align-items: center;
+  }
+  .new-msg-list-div .content-div .list-div .list-item .content .name{
+    font-weight: bold;
+    max-width: 90px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+  }
+  .new-msg-list-div .content-div .list-div .list-item .msg-num{
+    color: #fff;
+    background-color: red;
+    padding: 0 8px;
+    border-radius: 100px;
+  }
+  .new-msg-list-div .footer{
+    line-height: 34px;
+    padding: 0 20px;
+    text-align: right;
+    color: #586cb1;
+    cursor: pointer;
+  }
+</style>
